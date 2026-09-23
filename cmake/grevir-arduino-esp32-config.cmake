@@ -1,0 +1,6 @@
+include(CMakeFindDependencyMacro)
+find_dependency(grevir-base CONFIG)
+find_dependency(grevir-core CONFIG)
+find_dependency(grevir-peripherals CONFIG)
+find_dependency(grevir-arduino CONFIG)
+include("${CMAKE_CURRENT_LIST_DIR}/GrevirArduinoESP32Targets.cmake")
