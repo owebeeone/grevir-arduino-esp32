@@ -3,7 +3,10 @@
 Selected Arduino-ESP32 adapters for the classic ESP32 Dev Module. The package
 currently supplies pin capability checks and a SerialPort0 module that starts at a
 declared baud rate. It relies on the common Grevir Arduino GPIO and clock
-adapters. It does not provide an ESP32 timer, interrupt, or peripheral allocator.
+adapters. Its first interrupt adapter directly configures classic ESP32
+Timer Group 0 / Timer 0 and registers one callback through `esp_intr_alloc`.
+The selected firmware compiles and links; physical interrupt routing has not
+been tested. See the [interrupt guide](https://github.com/owebeeone/grevir-wz/blob/main/docs/guides/interrupts.md).
 
 ```cpp
 #include <GrevirArduinoESP32.h>
