@@ -26,3 +26,14 @@ install(EXPORT GrevirArduinoESP32Targets NAMESPACE grevir::
 install(FILES cmake/grevir-arduino-esp32-config.cmake
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/grevir-arduino-esp32)
 install(FILES LICENSE.txt DESTINATION ${CMAKE_INSTALL_DATADIR}/grevir-arduino-esp32)
+
+option(GREVIR_BUILD_HOST_TESTS "Run native ESP32 adapter policy tests" OFF)
+if(GREVIR_BUILD_HOST_TESTS)
+  enable_testing()
+  find_package(Threads REQUIRED)
+  add_executable(grevir_arduino_esp32_start_policy_test tests/start_policy_test.cpp)
+  target_link_libraries(grevir_arduino_esp32_start_policy_test PRIVATE
+    grevir::arduino_esp32 Threads::Threads)
+  add_test(NAME grevir_arduino_esp32_start_policy
+    COMMAND grevir_arduino_esp32_start_policy_test)
+endif()

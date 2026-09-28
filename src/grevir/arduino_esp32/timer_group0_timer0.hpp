@@ -1,14 +1,11 @@
 #pragma once
 
 #if defined(CONFIG_IDF_TARGET_ESP32)
-#include <atomic>
 #include <cstdint>
 #include <esp_err.h>
 #include <esp_intr_alloc.h>
 #include <esp_private/periph_ctrl.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
-#include <grevir/interrupt/start.hpp>
+#include <grevir/arduino_esp32/start_policy.hpp>
 #include <soc/interrupts.h>
 #include <soc/periph_defs.h>
 #include <soc/timer_group_struct.h>
@@ -104,33 +101,6 @@ class TimerGroup0Timer0 {
   inline static Callback callback_ = nullptr;
   inline static bool failed_ = false;
   inline static bool clock_enabled_ = false;
-};
-
-template <class Spec>
-class TimerStartPolicy {
- public:
-  template <class Body>
-  static interrupt::StartResult execute(Body body) noexcept {
-    unsigned char expected = 0;
-    if (state_.compare_exchange_strong(expected, 1,
-          std::memory_order_acq_rel, std::memory_order_acquire)) {
-      result_ = body();
-      state_.store(2, std::memory_order_release);
-      return result_;
-    }
-    const bool waited = expected == 1;
-    while (state_.load(std::memory_order_acquire) != 2) {
-      vTaskDelay(1);
-    }
-    auto result = result_;
-    result.disposition = waited ? interrupt::CallDisposition::waited
-                                : interrupt::CallDisposition::replayed;
-    return result;
-  }
-
- private:
-  inline static std::atomic<unsigned char> state_{0};
-  inline static interrupt::StartResult result_{};
 };
 
 } // namespace grevir::arduino_esp32
